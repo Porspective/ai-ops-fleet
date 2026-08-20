@@ -1,0 +1,6 @@
+.env
+*.log
+logs/
+.stamps/
+.DS_Store
+.claude-flow/

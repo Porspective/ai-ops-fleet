@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Daily calendar-fired job. One plist like this per prompts/<job>.md — change the
+     Label, the job-name argument, and the Hour/Minute. Every machine in the fleet
+     loads the same plists; run-job.sh's stamp claim dedups across machines. -->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.fleet.morning-intel</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>-c</string>
+        <string>$HOME/company/scripts/run-job.sh morning-intel</string>
+    </array>
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>6</integer>
+        <key>Minute</key>
+        <integer>5</integer>
+    </dict>
+    <key>StandardErrorPath</key>
+    <string>/tmp/fleet-morning-intel.err</string>
+</dict>
+</plist>

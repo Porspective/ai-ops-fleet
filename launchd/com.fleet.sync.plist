@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- State sync every 15 min. Install: cp to ~/Library/LaunchAgents/ then
+     launchctl load ~/Library/LaunchAgents/com.fleet.sync.plist -->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.fleet.sync</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>-c</string>
+        <string>$HOME/company/scripts/sync.sh</string>
+    </array>
+    <key>StartInterval</key>
+    <integer>900</integer>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>StandardErrorPath</key>
+    <string>/tmp/fleet-sync.err</string>
+</dict>
+</plist>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Interval-fired scraper, every 2h on the always-on node. Needs Ollama on :11434. -->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.fleet.job-intern</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>/Users/YOU/company/scripts/job-intern.py</string>
+    </array>
+    <key>StartInterval</key>
+    <integer>7200</integer>
+    <key>StandardOutPath</key>
+    <string>/tmp/fleet-job-intern.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/fleet-job-intern.err</string>
+</dict>
+</plist>
