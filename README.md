@@ -1,6 +1,6 @@
 # ai-ops-fleet
 
-A two-machine fleet that runs a one-person company's back office on a schedule: intelligence digests, a daily owner briefing, cold-email prospecting with send-day re-verification, lead-generation scraping pipelines, and a weekly self-audit — with a human approval gate in front of anything that leaves the machine. Designed and operated by Porter Robertson; implementation written with Claude Code under his direction, running daily since July 2026. This repo is a sanitized copy of the live system: real scripts and prompts, with names, handles, keys, and business data replaced by `{{PLACEHOLDERS}}`. It is a working reference, not a one-click install.
+A two-machine fleet that runs a one-person company's back office on a schedule: intelligence digests, a daily owner briefing, cold-email prospecting with send-day re-verification, lead-generation scraping pipelines, and a weekly self-audit — with verification gates, suppression compliance, and an owner kill switch on every outbound lane. Designed and operated by Porter Robertson; implementation written with Claude Code under his direction, running daily since July 2026. This repo is a sanitized copy of the live system: real scripts and prompts, with names, handles, keys, and business data replaced by `{{PLACEHOLDERS}}`. It is a working reference, not a one-click install.
 
 ## Architecture
 
@@ -39,7 +39,7 @@ flowchart TB
 
 **Fail-closed verification gates.** `scripts/send-approved.sh` is the only path from email queue to outbox, and it aborts unless everything checks out: a verification baseline must exist; `scripts/verify-sites.py` must confirm no prospect site drifted since drafting (every email asserts something observed on the site — if the site changed, the claim is false); the compliance footer placeholder must be filled; suppressed addresses are skipped and the suppression list is pushed to the sending platform's account-level blocklist first (`scripts/sync-blocklist.py`) so opt-outs are enforced even for sequences already in flight.
 
-**Human approval gate.** Scheduled jobs draft; they never send. The email pipeline writes a queue and texts the owner; drafts stop short of anything outbound. Sending is manual, every time.
+**Outbound gates.** Every outbound email passes send-day re-verification and a suppression-list check before it can load; volume is capped per day, replies pause a lane automatically, and the owner can halt any lane with one word. Money and anything irreversible stay manual.
 
 **Self-audit loop.** Sunday's `weekly-retro` job runs an auditor persona (Vera) over the repo, the stamps, the logs, and the session transcripts — including the CEO session's own claims. Its findings rewrite the status board's focus for the week. Several fixes in these scripts started as retro findings, including the discovery that four consecutive "successful" morning runs had died on an expired token and nobody noticed.
 

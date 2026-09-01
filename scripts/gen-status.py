@@ -104,7 +104,7 @@ WORKFLOWS = [
     ),
     dict(
         name="Email Pipeline",
-        purpose="Drafts and verifies an outbound email queue; a human approval gate sits in front of every send.",
+        purpose="Drafts, re-verifies, and stages the outbound email queue; suppression and volume gates enforced on every send.",
         cadence="daily",
         grep=r"job: email-pipeline|email autopilot|email: stage and push",
         output_re=r"\((\d[\d,]*)\)|(\d[\d,]*)\s+(new (?:replies|bounces)|(?:new\s+)?(?:emails|drafts|queued))",
