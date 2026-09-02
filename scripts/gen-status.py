@@ -228,7 +228,7 @@ def main():
 <div class="wrap">
   <header>
     <h1>ai-ops-fleet — live status</h1>
-    <div class="sub">Scheduled workflows running unattended since July 2026. Generated {generated}.</div>
+    <div class="sub">Scheduled workflows running unattended since August 2026. Generated {generated}.</div>
   </header>
   <div class="grid">
     {cards}

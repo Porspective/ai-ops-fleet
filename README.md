@@ -1,6 +1,6 @@
 # ai-ops-fleet
 
-A two-machine fleet that runs a one-person company's back office on a schedule: intelligence digests, a daily owner briefing, cold-email prospecting with send-day re-verification, lead-generation scraping pipelines, and a weekly self-audit — with verification gates, suppression compliance, and an owner kill switch on every outbound lane. Designed and operated by Porter Robertson; implementation written with Claude Code under his direction, running daily since July 2026. This repo is a sanitized copy of the live system: real scripts and prompts, with names, handles, keys, and business data replaced by `{{PLACEHOLDERS}}`. It is a working reference, not a one-click install.
+A two-machine fleet that runs a one-person company's back office on a schedule: intelligence digests, a daily owner briefing, cold-email prospecting with send-day re-verification, lead-generation scraping pipelines, and a weekly self-audit — with verification gates, suppression compliance, and an owner kill switch on every outbound lane. Designed and operated by Porter Robertson; implementation written with Claude Code under his direction, running daily since August 2026. This repo is a sanitized copy of the live system: real scripts and prompts, with names, handles, keys, and business data replaced by `{{PLACEHOLDERS}}`. It is a working reference, not a one-click install.
 
 ## Architecture
 
@@ -41,7 +41,7 @@ flowchart TB
 
 **Outbound gates.** Every outbound email passes send-day re-verification and a suppression-list check before it can load; volume is capped per day, replies pause a lane automatically, and the owner can halt any lane with one word. Money and anything irreversible stay manual.
 
-**Self-audit loop.** Sunday's `weekly-retro` job runs an auditor persona (Vera) over the repo, the stamps, the logs, and the session transcripts — including the CEO session's own claims. Its findings rewrite the status board's focus for the week. Several fixes in these scripts started as retro findings, including the discovery that four consecutive "successful" morning runs had died on an expired token and nobody noticed.
+**Self-audit loop.** Sunday's `weekly-retro` job runs an auditor persona (Bolen) over the repo, the stamps, the logs, and the session transcripts — including the CEO session's own claims. Its findings rewrite the status board's focus for the week. Several fixes in these scripts started as retro findings, including the discovery that four consecutive "successful" morning runs had died on an expired token and nobody noticed.
 
 **Cheap local scoring.** `scripts/job-intern.py` polls free job-board APIs every 2 hours and has a local 8B model (Ollama) score each posting against a candidate profile — zero marginal cost per run, so it can be always-on.
 
@@ -51,7 +51,7 @@ flowchart TB
 |---|---|---|---|
 | **morning-intel** | ~6:05 daily, both machines | AI/frontier news, world-news filter, a chat-transcript audit for wasted tool calls, a YouTube learning sweep | Skips sweeps it lacks data for (e.g. no transcripts on this machine) instead of failing the whole job |
 | **daily-briefing** | ~10:57 daily | One-line status per active department, ≤3 concrete owner tasks with deadlines, blockers, one intel highlight — under ~120 words, texted | Delivery falls back iMessage MCP → osascript → push notification → skip, in that order |
-| **email-pipeline** | weekdays, HQ | Prospects, drafts, and verifies a send queue; never sends | `send-approved.sh` re-checks the queue at send time — drafting-time truth can go stale |
+| **email-pipeline** | weekdays, HQ | Prospects, drafts, and verifies a send queue; `send-approved.sh` pushes it behind fail-closed gates | `send-approved.sh` re-checks the queue at send time — drafting-time truth can go stale |
 | **send-approved.sh (gate)** | on demand, owner-triggered | The only path from queue to outbox: verification baseline required, site-drift re-check, suppression list pushed to the platform first | Aborts closed on any missing check — a partial pass is a fail |
 | **nightly lead harvest** | ~2am, mule | Local-lawn-service lead pipeline: a state pesticide-applicator registry (public API, ~4,200 licensed companies), a Google Maps scrape (~500-query city×service grid), a Craigslist services pull, and a nightly jobs-board pull used as a hiring-signal sharpener — enriched, deduped, scored into email/call/social lanes | Each stage writes only new/changed rows to SQLite; a stage failing doesn't corrupt prior nights' data |
 | **weekly-retro (self-audit)** | Sun ~16:17 | Audits every department and the CEO session itself against evidence — files, stamps, logs, transcripts — rewrites the status board's weekly focus | Bias toward deleting stale status over adding new narrative; explicitly checks whether earlier "fixed" claims actually landed |
@@ -63,7 +63,7 @@ That's 9 distinct scheduled workflows plus the always-on `sync` backstop and the
 
 These are real counts from the live system, not projections.
 
-- **9 scheduled workflows** running across 2 machines since July 2026.
+- **9 scheduled workflows** running across 2 machines since August 2026.
 - **~4,200 licensed companies** in a state pesticide-applicator registry, cross-referenced against a ~500-query Google Maps grid, for the nightly lead-harvest pipeline.
 - **A self-audit that caught a silently failing job**: four consecutive "successful" morning runs had actually died on an expired token before anyone noticed — found by the weekly retro reading logs, not by a person watching a dashboard.
 
@@ -73,11 +73,11 @@ These are real counts from the live system, not projections.
 - **Fail-closed gates.** A verification step that can't complete blocks the send. A gate you can bypass by having it fail isn't a gate.
 - **Logs as source of truth.** Status is derived from what actually ran — stamps, git history, session transcripts — not from what a job claimed it did. The weekly audit exists specifically to catch the gap between the two.
 - **Model-cost routing.** Cheap, fast models (a local 8B Ollama model, Haiku-tier agents) handle high-volume mechanical work — scoring postings, single-field form fills. Higher-capability models are reserved for the parts that need judgment — cover text, gate-screening ambiguous postings, coordinating the rest.
-- **Human owns anything irreversible.** Scheduled jobs draft, tailor, and fill. They never send an email or spend money. That line does not move regardless of how far the automation gets.
+- **Human owns anything irreversible.** Scheduled jobs draft, tailor, and fill. They never spend money; email goes out only through `send-approved.sh`, behind fail-closed verification gates and the owner's one-word kill switch. That line does not move regardless of how far the automation gets.
 
 ## Built with Claude Code
 
-This fleet was designed and is operated day to day by one person using Claude Code — the scheduling, the scripts, the prompts, and the persona-based subagents that stand in as "staff" (an auditor, a revenue lead, a finder) are all AI-assisted implementation under direct human direction. It's been running unattended, on a schedule, since July 2026, and its own failures (a stale token, a race condition, a subject-line leak) get found by another automated pass — the weekly self-audit — rather than staying invisible. For AI-ops and automation roles, that's the pitch: not a demo, a system that has been operating a real (if small) business continuously and has the scar tissue to show for it.
+This fleet was designed and is operated day to day by one person using Claude Code — the scheduling, the scripts, the prompts, and the persona-based subagents that stand in as "staff" (an auditor, a revenue lead, a finder) are all AI-assisted implementation under direct human direction. It's been running unattended, on a schedule, since August 2026, and its own failures (a stale token, a race condition, a subject-line leak) get found by another automated pass — the weekly self-audit — rather than staying invisible. For AI-ops and automation roles, that's the pitch: not a demo, a system that has been operating a real (if small) business continuously and has the scar tissue to show for it.
 
 ## Repo layout
 
